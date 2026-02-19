@@ -27,6 +27,7 @@ helm install kuberca oci://ghcr.io/kuberca-io/charts/kuberca --version 0.1.0
 
 ## Links
 
+- [Website](https://kuberca.io)
 - [Source code](https://github.com/Kuberca-io/KubeRCA)
 - [Documentation](https://kuberca.io)
 - [Releases](https://github.com/Kuberca-io/KubeRCA/releases)
