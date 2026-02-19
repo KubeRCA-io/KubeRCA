@@ -1,0 +1,73 @@
+[project]
+name = "kuberca"
+version = "0.1.0"
+description = "Kubernetes Root Cause Analysis System"
+readme = {text = "KubeRCA - Kubernetes Root Cause Analysis System", content-type = "text/plain"}
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+authors = [{ name = "IaM DEV" }]
+
+dependencies = [
+    "kubernetes-asyncio>=31.0.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "pydantic>=2.10.0",
+    "httpx>=0.28.0",
+    "mcp>=1.0.0",
+    "structlog>=24.4.0",
+    "prometheus-client>=0.21.0",
+    "aiosqlite>=0.20.0",
+    "click>=8.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+]
+
+[project.scripts]
+kuberca = "kuberca.cli.main:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["kuberca"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "kubernetes_asyncio.*",
+    "mcp.*",
+    "prometheus_client.*",
+    "aiosqlite.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+    "integration: marks tests as integration tests",
+    "performance: marks tests as performance benchmarks",
+]

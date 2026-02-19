@@ -1,0 +1,29 @@
+# R01 trigger: OOMKilled
+# Allocates memory beyond the 10Mi limit, causing the kernel OOM killer to
+# terminate the container.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: oom-victim
+  namespace: kuberca-e2e
+  labels:
+    e2e-test: "true"
+    rule: r01
+spec:
+  restartPolicy: Never
+  containers:
+    - name: oom
+      image: python:3.12-slim
+      command:
+        - python3
+        - "-c"
+        - |
+          # Allocate ~50 MB in a tight loop — well beyond the 10Mi limit.
+          blocks = []
+          while True:
+              blocks.append(b"x" * (1024 * 1024))
+      resources:
+        limits:
+          memory: "10Mi"
+        requests:
+          memory: "10Mi"

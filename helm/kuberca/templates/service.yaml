@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kuberca.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kuberca.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+  selector:
+    {{- include "kuberca.selectorLabels" . | nindent 4 }}

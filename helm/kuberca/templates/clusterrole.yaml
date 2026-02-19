@@ -1,0 +1,73 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kuberca.fullname" . }}
+  labels:
+    {{- include "kuberca.labels" . | nindent 4 }}
+rules:
+  # Core resources — read-only watch for event collection and cache population
+  - apiGroups: [""]
+    resources:
+      - pods
+      - nodes
+      - events
+      - services
+      - endpoints
+      - namespaces
+      - persistentvolumeclaims
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+
+  # Secrets — metadata only (no data access); needed to track imagePullSecret
+  # names for Change Ledger diff correlation.
+  - apiGroups: [""]
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+
+  # Apps — workload resources for cache and change ledger
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - replicasets
+      - statefulsets
+      - daemonsets
+    verbs:
+      - get
+      - list
+      - watch
+
+  # Autoscaling — HPA for R05 rule correlation
+  - apiGroups: ["autoscaling"]
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - get
+      - list
+      - watch
+
+  # Batch — Jobs and CronJobs for event correlation
+  - apiGroups: ["batch"]
+    resources:
+      - jobs
+      - cronjobs
+    verbs:
+      - get
+      - list
+      - watch
+
+  # Networking — Ingress and NetworkPolicy for R06/R08 correlation
+  - apiGroups: ["networking.k8s.io"]
+    resources:
+      - ingresses
+      - networkpolicies
+    verbs:
+      - get
+      - list
+      - watch

@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kuberca.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kuberca.labels" . | nindent 4 }}
+data:
+  # ── Cluster identity ────────────────────────────────────────────────────────
+  KUBERCA_CLUSTER_ID: {{ .Values.clusterId | quote }}
+
+  # ── Ollama ──────────────────────────────────────────────────────────────────
+  KUBERCA_OLLAMA_ENABLED: {{ .Values.ollama.enabled | toString | quote }}
+  KUBERCA_OLLAMA_ENDPOINT: {{ .Values.ollama.endpoint | quote }}
+  KUBERCA_OLLAMA_MODEL: {{ .Values.ollama.model | quote }}
+  KUBERCA_OLLAMA_TIMEOUT: {{ .Values.ollama.timeout | toString | quote }}
+  KUBERCA_OLLAMA_MAX_RETRIES: {{ .Values.ollama.maxRetries | toString | quote }}
+  KUBERCA_OLLAMA_TEMPERATURE: {{ .Values.ollama.temperature | toString | quote }}
+  KUBERCA_OLLAMA_MAX_TOKENS: {{ .Values.ollama.maxTokens | toString | quote }}
+  KUBERCA_OLLAMA_HEALTH_CHECK_INTERVAL: {{ .Values.ollama.healthCheckInterval | toString | quote }}
+
+  # ── Rule engine ─────────────────────────────────────────────────────────────
+  KUBERCA_RULE_ENGINE_TIME_WINDOW: {{ .Values.ruleEngine.timeWindow | quote }}
+  KUBERCA_RULE_ENGINE_TIER2_ENABLED: {{ .Values.ruleEngine.tier2Enabled | toString | quote }}
+
+  # ── Change ledger ───────────────────────────────────────────────────────────
+  KUBERCA_CHANGE_LEDGER_MAX_VERSIONS: {{ .Values.changeLedger.maxVersions | toString | quote }}
+  KUBERCA_CHANGE_LEDGER_RETENTION: {{ .Values.changeLedger.retention | quote }}
+  KUBERCA_LEDGER_PERSISTENCE_ENABLED: {{ .Values.ledger.persistence.enabled | toString | quote }}
+
+  # ── Scout ───────────────────────────────────────────────────────────────────
+  KUBERCA_SCOUT_ANOMALY_COOLDOWN: {{ .Values.scout.anomaly.cooldown | quote }}
+
+  # ── Notifications ───────────────────────────────────────────────────────────
+  KUBERCA_NOTIFICATIONS_SLACK_SECRET_REF: {{ .Values.notifications.slack.secretRef | quote }}
+  KUBERCA_NOTIFICATIONS_EMAIL_SECRET_REF: {{ .Values.notifications.email.secretRef | quote }}
+  KUBERCA_NOTIFICATIONS_EMAIL_TO: {{ .Values.notifications.email.to | quote }}
+  KUBERCA_NOTIFICATIONS_WEBHOOK_SECRET_REF: {{ .Values.notifications.webhook.secretRef | quote }}
+
+  # ── REST API ─────────────────────────────────────────────────────────────────
+  KUBERCA_API_PORT: {{ .Values.api.port | toString | quote }}
+
+  # ── Logging ──────────────────────────────────────────────────────────────────
+  KUBERCA_LOG_LEVEL: {{ .Values.log.level | quote }}

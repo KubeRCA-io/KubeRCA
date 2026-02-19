@@ -1,0 +1,16 @@
+# R04 trigger: ImagePullBackOff
+# References a container image that does not exist in any registry,
+# causing K8s to fail pulling it repeatedly.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-image
+  namespace: kuberca-e2e
+  labels:
+    e2e-test: "true"
+    rule: r04
+spec:
+  restartPolicy: Never
+  containers:
+    - name: missing
+      image: kuberca-nonexistent:never

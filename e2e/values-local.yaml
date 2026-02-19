@@ -1,0 +1,26 @@
+# Helm value overrides for local Docker Desktop E2E testing.
+# Usage: helm install kuberca helm/kuberca -n kuberca-e2e -f e2e/values-local.yaml
+
+image:
+  repository: kuberca
+  tag: "0.1.0"
+  pullPolicy: Never
+
+ollama:
+  enabled: false
+
+log:
+  level: "debug"
+
+service:
+  type: NodePort
+  port: 8080
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65534
+  capabilities:
+    drop:
+      - ALL

@@ -1,0 +1,40 @@
+{{- if .Values.networkPolicy.enabled -}}
+# NetworkPolicy: restrict ingress to the kuberca pod.
+# Only pods whose namespace carries the label "kuberca-access=true" can reach
+# the REST API on port {{ .Values.api.port }}.
+#
+# To allow a namespace:
+#   kubectl label namespace <your-ns> kuberca-access=true
+#
+# mTLS via service mesh (Istio/Linkerd) is NOT affected by this policy — mesh
+# sidecar traffic operates at L3/L4 and is handled independently.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "kuberca.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kuberca.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "kuberca.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow REST/MCP traffic only from namespaces labelled kuberca-access=true
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kuberca-access: "true"
+      ports:
+        - protocol: TCP
+          port: {{ .Values.api.port }}
+    # Always allow liveness/readiness probes from the kubelet (node-level traffic)
+    - from:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: {{ .Values.api.port }}
+{{- end }}

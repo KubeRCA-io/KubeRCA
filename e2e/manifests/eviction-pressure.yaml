@@ -1,0 +1,28 @@
+# R17 trigger: Evicted (resource pressure)
+# Creates a Pod with an ephemeral storage limit that will be exceeded,
+# triggering eviction by the kubelet's eviction manager.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: eviction-pressure
+  namespace: kuberca-e2e
+  labels:
+    e2e-test: "true"
+    rule: r17
+spec:
+  restartPolicy: Never
+  containers:
+    - name: disk-hog
+      image: busybox:1.36
+      command:
+        - sh
+        - "-c"
+        - |
+          # Write ~100MB to ephemeral storage to exceed the 10Mi limit.
+          dd if=/dev/zero of=/tmp/fill bs=1M count=100 2>/dev/null
+          sleep 3600
+      resources:
+        limits:
+          ephemeral-storage: "10Mi"
+        requests:
+          ephemeral-storage: "10Mi"

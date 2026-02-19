@@ -1,0 +1,211 @@
+# KubeRCA Helm values
+# All settings correspond to KUBERCA_* environment variables consumed by the application.
+# See docs/KubeRCA-Technical-Design-Spec-v1_7.md Section 12 for the full schema.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Image
+# ─────────────────────────────────────────────────────────────────────────────
+image:
+  repository: kuberca/kuberca
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Deployment
+# ─────────────────────────────────────────────────────────────────────────────
+replicaCount: 1
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Cluster identity
+# ─────────────────────────────────────────────────────────────────────────────
+# Human-readable name for this cluster, surfaced in RCAResponse._meta.cluster_id.
+# Leave empty to auto-detect from the kube-system namespace UID at startup.
+clusterId: ""
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Ollama LLM integration (optional)
+# ─────────────────────────────────────────────────────────────────────────────
+ollama:
+  # Set to true to enable the LLM fallback path.
+  # When false, KubeRCA runs in rule-engine-only mode.
+  enabled: false
+
+  # Ollama API endpoint.  Typically the service address of a co-located Ollama
+  # deployment, or an external Ollama instance accessible from the cluster.
+  endpoint: "http://localhost:11434"
+
+  # Model tag.  The model must already be pulled in the Ollama instance.
+  model: "qwen2.5:7b"
+
+  # Per-request timeout in seconds.  Range: 10–90.
+  timeout: 30
+
+  # Number of retries on JSON parse failure.  Range: 0–5.
+  maxRetries: 3
+
+  # Sampling temperature.  Low values (0.1) produce deterministic outputs.
+  temperature: 0.1
+
+  # Maximum tokens per response.
+  maxTokens: 2048
+
+  # Ollama availability health-check interval in seconds.
+  healthCheckInterval: 60
+
+  # GPU resource request.  Set to true when using a GPU-accelerated Ollama pod.
+  gpu:
+    enabled: false
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Rule engine
+# ─────────────────────────────────────────────────────────────────────────────
+ruleEngine:
+  # Lookback window for event correlation.  Format: <int>(m|h|d).  Max: 24h.
+  timeWindow: "2h"
+
+  # Enable Tier 2 rules (R04–R10).  Tier 1 rules (R01–R03) are always enabled.
+  tier2Enabled: true
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Change ledger
+# ─────────────────────────────────────────────────────────────────────────────
+changeLedger:
+  # Maximum snapshot versions retained per resource.  Range: 2–20.
+  maxVersions: 5
+
+  # Snapshot retention window.  Format: <int>(m|h|d).  Max: 24h.
+  retention: "6h"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Ledger persistence (SQLite)
+# ─────────────────────────────────────────────────────────────────────────────
+ledger:
+  persistence:
+    # Set to true to persist ledger snapshots in a SQLite database.
+    # Requires a writable emptyDir or PVC mounted at /data.
+    enabled: false
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Scout anomaly detector
+# ─────────────────────────────────────────────────────────────────────────────
+scout:
+  anomaly:
+    # Cooldown between repeated alerts for the same (resource, reason) pair.
+    # Format: <int>(m|h).  Minimum: 1m.
+    cooldown: "15m"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Notification channels
+# ─────────────────────────────────────────────────────────────────────────────
+notifications:
+  slack:
+    # Name of a K8s Secret in the same namespace containing the key
+    # "webhook-url" with the Slack incoming webhook URL.
+    # Leave empty to disable Slack notifications.
+    secretRef: ""
+
+  email:
+    # Name of a K8s Secret containing SMTP credentials:
+    #   smtp-host, smtp-port, smtp-user, smtp-password
+    # Leave empty to disable email notifications.
+    secretRef: ""
+
+    # Recipient email address (RFC 5322).
+    to: ""
+
+  webhook:
+    # Name of a K8s Secret containing "url" key with the generic webhook endpoint.
+    # Leave empty to disable generic webhook notifications.
+    secretRef: ""
+
+# ─────────────────────────────────────────────────────────────────────────────
+# REST API
+# ─────────────────────────────────────────────────────────────────────────────
+api:
+  # Port the uvicorn server listens on inside the container.  Range: 1024–65535.
+  port: 8080
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Logging
+# ─────────────────────────────────────────────────────────────────────────────
+log:
+  # Log level: debug | info | warning | error.
+  # NOTE: debug level populates debug_context in EvidenceItem and raw_object
+  # in EventRecord — never use debug in production environments.
+  level: "info"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Kubernetes service
+# ─────────────────────────────────────────────────────────────────────────────
+service:
+  # ClusterIP is the only supported type in Phase 1.
+  # Use kubectl port-forward for local access.
+  # To expose for development: change to NodePort or LoadBalancer.
+  type: ClusterIP
+  port: 8080
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Service account
+# ─────────────────────────────────────────────────────────────────────────────
+serviceAccount:
+  # Create a dedicated ServiceAccount bound to the ClusterRole below.
+  create: true
+  # Override the generated name.  Leave empty to use the chart fullname.
+  name: ""
+  # Additional annotations (e.g., for IRSA or Workload Identity).
+  annotations: {}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Resource limits
+# ─────────────────────────────────────────────────────────────────────────────
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "100m"
+    memory: "256Mi"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Pod security
+# ─────────────────────────────────────────────────────────────────────────────
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+  fsGroup: 65534
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65534
+  capabilities:
+    drop:
+      - ALL
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Network policy
+# ─────────────────────────────────────────────────────────────────────────────
+networkPolicy:
+  # When enabled, restricts ingress to pods whose namespace carries the label
+  # kuberca-access=true.  Disable if your cluster uses a different policy model
+  # or if you rely on a service mesh for mTLS/access control.
+  enabled: false
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Pod scheduling
+# ─────────────────────────────────────────────────────────────────────────────
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Extra pod annotations (e.g., for Prometheus scraping, vault injection)
+podAnnotations: {}
+
+# Extra pod labels
+podLabels: {}

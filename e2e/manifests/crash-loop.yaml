@@ -1,0 +1,17 @@
+# R02 trigger: CrashLoopBackOff
+# Exits immediately with a non-zero code, causing Kubernetes to restart
+# the container repeatedly until it enters CrashLoopBackOff.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: crash-loop
+  namespace: kuberca-e2e
+  labels:
+    e2e-test: "true"
+    rule: r02
+spec:
+  restartPolicy: Always
+  containers:
+    - name: crasher
+      image: busybox:1.36
+      command: ["sh", "-c", "echo 'crashing now' && exit 1"]
