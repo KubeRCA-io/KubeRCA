@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" fill="none">
+  <!-- KubeRCA Logo - Primary Dark Variant -->
+  
+  <!-- Icon: Hexagonal node with Kubernetes-inspired connections -->
+  <g transform="translate(40, 40)">
+    <!-- Outer hexagon -->
+    <path d="M0 -24L20.78 -12L20.78 12L0 24L-20.78 12L-20.78 -12Z" stroke="#00e5ff" stroke-width="1.8" fill="none" opacity="0.3"/>
+    <!-- Inner hexagon -->
+    <path d="M0 -16L13.86 -8L13.86 8L0 16L-13.86 8L-13.86 -8Z" stroke="#00e5ff" stroke-width="1.8" fill="none" opacity="0.6"/>
+    <!-- Central node -->
+    <circle cx="0" cy="0" r="4.5" fill="#00e5ff"/>
+    <!-- Pulse ring -->
+    <circle cx="0" cy="0" r="7" stroke="#00e5ff" stroke-width="1.3" fill="none" opacity="0.5"/>
+    <!-- Connection lines from center to inner hexagon vertices -->
+    <line x1="0" y1="-7" x2="0" y2="-16" stroke="#00e5ff" stroke-width="1.3" opacity="0.4"/>
+    <line x1="6.06" y1="-3.5" x2="13.86" y2="-8" stroke="#00e5ff" stroke-width="1.3" opacity="0.4"/>
+    <line x1="6.06" y1="3.5" x2="13.86" y2="8" stroke="#00e5ff" stroke-width="1.3" opacity="0.4"/>
+    <line x1="0" y1="7" x2="0" y2="16" stroke="#00e5ff" stroke-width="1.3" opacity="0.4"/>
+    <line x1="-6.06" y1="3.5" x2="-13.86" y2="8" stroke="#00e5ff" stroke-width="1.3" opacity="0.4"/>
+    <line x1="-6.06" y1="-3.5" x2="-13.86" y2="-8" stroke="#00e5ff" stroke-width="1.3" opacity="0.4"/>
+  </g>
+  
+  <!-- Wordmark -->
+  <text x="76" y="49" font-family="'JetBrains Mono', 'SF Mono', 'Fira Code', monospace" font-weight="800" font-size="32" letter-spacing="-1.5">
+    <tspan fill="#e2e8f0">Kube</tspan><tspan fill="#00e5ff">RCA</tspan>
+  </text>
+</svg>

@@ -80,11 +80,16 @@ cython_debug/
 *.iml
 .uv/
 
-# business docs
-docs
+# business docs (keep .md guides tracked)
+docs/*.docx
+docs/*.html
 
-# logos
-images
+# logos (keep SVGs tracked)
+images/*.png
+images/*.jpg
+images/*.jpeg
 
 # ai
 .claude
+.dirigent
+CLAUDE.md
