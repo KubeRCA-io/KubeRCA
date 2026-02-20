@@ -3,7 +3,7 @@
 
 image:
   repository: kuberca
-  tag: "0.1.0"
+  tag: "0.1.1"
   pullPolicy: Never
 
 ollama:

@@ -8,7 +8,7 @@
 # Prerequisites:
 #   - Docker Desktop with Kubernetes enabled
 #   - kubectl, helm, curl, and jq on PATH
-#   - KubeRCA Docker image built: docker build -t kuberca:0.1.0 .
+#   - KubeRCA Docker image built: docker build -t kuberca:0.1.1 .
 #
 # Usage:
 #   ./e2e/run_e2e.sh          # full run (deploy + test + cleanup)
@@ -95,12 +95,12 @@ fi
 _log "Kubernetes cluster reachable"
 
 # Verify Docker image exists
-if ! docker image inspect kuberca:0.1.0 >/dev/null 2>&1; then
-    _log "ERROR: Docker image 'kuberca:0.1.0' not found."
-    _log "  Build it first:  docker build -t kuberca:0.1.0 ."
+if ! docker image inspect kuberca:0.1.1 >/dev/null 2>&1; then
+    _log "ERROR: Docker image 'kuberca:0.1.1' not found."
+    _log "  Build it first:  docker build -t kuberca:0.1.1 ."
     exit 1
 fi
-_log "Docker image kuberca:0.1.0 found"
+_log "Docker image kuberca:0.1.1 found"
 
 # ── Step 1: Create namespace ───────────────────────────────────────────────
 

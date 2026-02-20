@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-02-20
+
+### Security
+
+- Switch Docker base image from `python:3.12-slim` (Debian) to `python:3.12-alpine` — eliminates 23 Debian-package CVEs
+- Remove pip/setuptools from runtime image — eliminates CVE-2025-8869 and CVE-2026-1703
+- Remaining: 1 medium busybox CVE (CVE-2025-60876, no upstream fix)
+
+### Changed
+
+- Docker image size reduced from ~150 MB to ~45 MB
+- Use Alpine's built-in nobody user (UID/GID 65534) instead of creating one
+
+### Added
+
+- Test coverage increased from 64% to 85% (623 → 1036 tests)
+- 8 new test files covering rules R04-R10, collectors, MCP, notifications, rules init, cache, app lifecycle
+
+[0.1.1]: https://github.com/KubeRCA-io/KubeRCA/compare/v0.1.0...v0.1.1
+
 ## [0.1.0] - 2025-02-19
 
 ### Added

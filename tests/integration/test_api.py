@@ -46,7 +46,7 @@ def _make_rca_response(**overrides) -> RCAResponse:
         ],
         "suggested_remediation": "Increase memory limit for the container.",
         "_meta": ResponseMeta(
-            kuberca_version="0.1.0",
+            kuberca_version="0.1.1",
             schema_version="1",
             cluster_id="test-cluster",
             timestamp="2024-01-15T10:30:01Z",
