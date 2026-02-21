@@ -2,6 +2,26 @@ apiVersion: v1
 entries:
   kuberca:
   - apiVersion: v2
+    appVersion: 0.1.1
+    created: "2026-02-21T08:34:04.966152253Z"
+    description: Kubernetes Root Cause Analysis System
+    digest: eb852378ff8ae0238758ce7a45c4ef6dbbaea1f264d7fac6baa4aecf56f97a2e
+    home: https://kuberca.io
+    keywords:
+    - kubernetes
+    - observability
+    - root-cause-analysis
+    - aiops
+    maintainers:
+    - name: IaM DEV
+    name: kuberca
+    sources:
+    - https://github.com/kuberca-io/kuberca
+    type: application
+    urls:
+    - https://github.com/KubeRCA-io/KubeRCA/releases/download/kuberca-0.1.1/kuberca-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
     appVersion: 0.1.0
     created: "2026-02-19T20:25:14.75897+01:00"
     description: Kubernetes Root Cause Analysis System
@@ -21,4 +41,4 @@ entries:
     urls:
     - https://github.com/Kuberca-io/KubeRCA/releases/download/v0.1.0/kuberca-0.1.0.tgz
     version: 0.1.0
-generated: "2026-02-19T20:25:14.757251+01:00"
+generated: "2026-02-21T08:34:04.96616661Z"
