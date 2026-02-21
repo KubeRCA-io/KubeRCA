@@ -780,9 +780,7 @@ class TestRuntimeInvariantViolationPaths:
         )
         eval_meta = EvaluationMeta()
         with patch("kuberca.analyst.coordinator._logger") as mock_logger:
-            response = _rule_result_to_rca_response(
-                rule_result, CacheReadiness.DEGRADED, eval_meta, "test-cluster", 0
-            )
+            response = _rule_result_to_rca_response(rule_result, CacheReadiness.DEGRADED, eval_meta, "test-cluster", 0)
             # DEGRADED applies -0.10 penalty: 0.05 - 0.10 = -0.05 → triggers violation
             mock_logger.error.assert_called_once()
             call_kwargs = mock_logger.error.call_args
@@ -831,7 +829,5 @@ class TestRuntimeInvariantViolationPaths:
             cache._ready_kinds = set()  # No kinds ready → WARMING
             cache._recompute_readiness()
             # READY → WARMING is invalid and should trigger violation
-            error_calls = [
-                c for c in mock_log.error.call_args_list if "invariant_violated" in str(c)
-            ]
+            error_calls = [c for c in mock_log.error.call_args_list if "invariant_violated" in str(c)]
             assert len(error_calls) > 0, "Expected INV-CS01 violation for READY → WARMING"

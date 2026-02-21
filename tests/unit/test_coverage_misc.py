@@ -1349,11 +1349,7 @@ class TestTruncatedTraversal:
                 kind="PersistentVolume",
                 namespace="",
                 name="pv-001",
-                spec={
-                    "metadata": {
-                        "ownerReferences": [{"kind": "StorageClass", "name": "standard"}]
-                    }
-                },
+                spec={"metadata": {"ownerReferences": [{"kind": "StorageClass", "name": "standard"}]}},
             )
         )
 

@@ -503,7 +503,9 @@ class TestStatusManyEvents:
 # ---------------------------------------------------------------------------
 
 
-def _make_http_error_mock(method: str, url: str, status_code: int, body: str, content_type: str = "text/plain") -> object:
+def _make_http_error_mock(
+    method: str, url: str, status_code: int, body: str, content_type: str = "text/plain"
+) -> object:
     """Build a mock httpx.Client that raises HTTPStatusError for the given response."""
     from unittest.mock import MagicMock
 
@@ -520,9 +522,7 @@ def _make_http_error_mock(method: str, url: str, status_code: int, body: str, co
     mock_client.__enter__ = MagicMock(return_value=mock_client)
     mock_client.__exit__ = MagicMock(return_value=False)
     mock_response = MagicMock()
-    mock_response.raise_for_status.side_effect = httpx.HTTPStatusError(
-        str(status_code), request=req, response=resp
-    )
+    mock_response.raise_for_status.side_effect = httpx.HTTPStatusError(str(status_code), request=req, response=resp)
     mock_client.get.return_value = mock_response
     mock_client.post.return_value = mock_response
     return mock_client

@@ -730,9 +730,7 @@ class TestRecordMemoryPressure:
             patch.object(ledger, "_failsafe_evict") as mock_evict,
         ):
             # After failsafe_evict, re-estimate must return below HARD_LIMIT
-            mock_evict.side_effect = lambda: patch.object(
-                ledger, "_estimate_memory_bytes", return_value=0
-            ).__enter__()
+            mock_evict.side_effect = lambda: patch.object(ledger, "_estimate_memory_bytes", return_value=0).__enter__()
             # Simplify: just check evict is called
             with contextlib.suppress(Exception):
                 ledger.record(_snap())
@@ -1022,6 +1020,7 @@ class TestStopBeforeStart:
     @pytest.mark.asyncio
     async def test_stop_before_start_is_safe(self) -> None:
         """stop() can be called before start() without raising."""
+
         async def analyze(resource: str, time_window: str) -> str:
             return "done"
 
@@ -1093,6 +1092,7 @@ class TestWorkerCancelledAndException:
     @pytest.mark.asyncio
     async def test_worker_sets_exception_on_future_when_analyze_raises(self) -> None:
         """_worker() sets the exception on the future when analyze_fn raises."""
+
         async def analyze(resource: str, time_window: str) -> str:
             raise RuntimeError("boom")
 

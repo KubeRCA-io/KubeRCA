@@ -246,7 +246,9 @@ class TestR01Explain:
         assert result.confidence <= 0.95
         assert len(result.evidence) == 2  # event + change
         assert len(result.affected_resources) == 2  # pod + deployment
-        assert "memory limit" in result.suggested_remediation.lower() or "memory" in result.suggested_remediation.lower()
+        assert (
+            "memory limit" in result.suggested_remediation.lower() or "memory" in result.suggested_remediation.lower()
+        )
 
     def test_explain_without_memory_change(self) -> None:
         rule = OOMKilledRule()
@@ -436,9 +438,7 @@ class TestR01Helpers:
         assert _current_memory_limit(deploy) == "<unknown>"
 
     def test_container_name_from_path_found(self) -> None:
-        result = _container_name_from_path(
-            "spec.template.spec.containers[0].resources.limits.memory"
-        )
+        result = _container_name_from_path("spec.template.spec.containers[0].resources.limits.memory")
         assert result == "containers[0]"
 
     def test_container_name_from_path_no_containers(self) -> None:
@@ -515,11 +515,11 @@ class TestR03ClassifySchedulerMessage:
         assert _classify_scheduler_message(msg) == _SchedulerPattern.TAINT_TOLERATION
 
     def test_pvc_not_found(self) -> None:
-        msg = "0/3 nodes are available: persistentvolumeclaim \"my-pvc\" not found."
+        msg = '0/3 nodes are available: persistentvolumeclaim "my-pvc" not found.'
         assert _classify_scheduler_message(msg) == _SchedulerPattern.PVC_BINDING
 
     def test_pvc_unbound(self) -> None:
-        msg = "0/2 nodes are available: persistentvolumeclaim \"data-pvc\" unbound."
+        msg = '0/2 nodes are available: persistentvolumeclaim "data-pvc" unbound.'
         assert _classify_scheduler_message(msg) == _SchedulerPattern.PVC_BINDING
 
     def test_unknown_pattern(self) -> None:
@@ -966,7 +966,11 @@ class TestR03BuildDiagnosis:
             node_truncated=False,
         )
 
-        assert "not in the recognized" in root_cause.lower() or "unknown" in root_cause.lower() or "incomplete" in root_cause.lower()
+        assert (
+            "not in the recognized" in root_cause.lower()
+            or "unknown" in root_cause.lower()
+            or "incomplete" in root_cause.lower()
+        )
         assert "kubectl describe pod" in remediation
 
     def test_truncated_node_note(self) -> None:

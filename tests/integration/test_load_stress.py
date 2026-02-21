@@ -869,8 +869,7 @@ def test_ledger_trim_during_analysis() -> None:
             exceptions_raised.append(exc)
 
     assert not exceptions_raised, (
-        f"Rule engine raised {len(exceptions_raised)} exception(s) during ledger trim. "
-        f"First: {exceptions_raised[0]}"
+        f"Rule engine raised {len(exceptions_raised)} exception(s) during ledger trim. First: {exceptions_raised[0]}"
     )
 
 
@@ -1010,9 +1009,7 @@ def test_concurrent_penalty_application() -> None:
     assert len(partial_confidences) == 50
 
     # All READY results should be exactly 0.80
-    assert all(c == base_confidence for c in ready_confidences), (
-        f"READY confidences varied: {set(ready_confidences)}"
-    )
+    assert all(c == base_confidence for c in ready_confidences), f"READY confidences varied: {set(ready_confidences)}"
 
     # All PARTIALLY_READY results should be exactly 0.65 (0.80 - 0.15)
     expected_partial = base_confidence - 0.15
@@ -1099,8 +1096,7 @@ def test_memory_pressure_under_gc() -> None:
             exceptions_raised.append(exc)
 
     assert not exceptions_raised, (
-        f"Rule engine raised {len(exceptions_raised)} exception(s) under memory pressure. "
-        f"First: {exceptions_raised[0]}"
+        f"Rule engine raised {len(exceptions_raised)} exception(s) under memory pressure. First: {exceptions_raised[0]}"
     )
 
 
