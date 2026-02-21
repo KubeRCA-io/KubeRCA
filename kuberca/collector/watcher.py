@@ -15,7 +15,7 @@ import asyncio
 import contextlib
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Coroutine
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from kubernetes_asyncio import watch
@@ -295,14 +295,14 @@ class BaseWatcher(ABC):
 
     def _record_burst_error(self) -> None:
         """Record a 429/500 error timestamp for burst detection."""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         cutoff = now - timedelta(seconds=_BURST_WINDOW_S)
         self._error_burst_times = [t for t in self._error_burst_times if t >= cutoff]
         self._error_burst_times.append(now)
 
     def _should_relist_on_burst(self) -> bool:
         """Return True if burst threshold has been exceeded in the window."""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         cutoff = now - timedelta(seconds=_BURST_WINDOW_S)
         recent = [t for t in self._error_burst_times if t >= cutoff]
         return len(recent) > _BURST_RELIST_THRESHOLD
@@ -320,7 +320,7 @@ class BaseWatcher(ABC):
         - QPS 5 across all list pages
         - Falls back to Pods-only relist if full relist times out
         """
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         # Rate-limit: at most once every 5 minutes
         if self._last_relist_at is not None:

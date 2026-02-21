@@ -253,7 +253,7 @@ class TestBaseWatcher:
     def test_record_burst_error_evicts_stale(self) -> None:
         """Timestamps older than 60 s are evicted when a new error is recorded."""
         watcher = self._make_watcher()
-        old_time = datetime.utcnow() - timedelta(seconds=120)
+        old_time = datetime.now(UTC) - timedelta(seconds=120)
         watcher._error_burst_times = [old_time]
 
         watcher._record_burst_error()
@@ -319,7 +319,7 @@ class TestBaseWatcher:
         """A 429 after burst threshold triggers relist (not backoff)."""
         watcher = self._make_watcher()
         # Pre-populate burst times to exceed threshold
-        watcher._error_burst_times = [datetime.utcnow(), datetime.utcnow()]
+        watcher._error_burst_times = [datetime.now(UTC), datetime.now(UTC)]
 
         exc = MagicMock()
         exc.status = 429
@@ -375,7 +375,7 @@ class TestBaseWatcher:
         """A second relist within 5 minutes should be throttled (backoff instead)."""
         watcher = self._make_watcher()
         # Set last relist to 1 minute ago
-        watcher._last_relist_at = datetime.utcnow() - timedelta(seconds=60)
+        watcher._last_relist_at = datetime.now(UTC) - timedelta(seconds=60)
 
         with (
             patch.object(watcher, "_do_relist", new_callable=AsyncMock) as mock_do,
@@ -390,7 +390,7 @@ class TestBaseWatcher:
         """A relist after the minimum interval should execute _do_relist."""
         watcher = self._make_watcher()
         # Last relist more than 5 min ago
-        watcher._last_relist_at = datetime.utcnow() - timedelta(seconds=400)
+        watcher._last_relist_at = datetime.now(UTC) - timedelta(seconds=400)
 
         with (
             patch.object(watcher, "_do_relist", new_callable=AsyncMock) as mock_do,

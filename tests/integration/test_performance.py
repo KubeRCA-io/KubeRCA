@@ -32,6 +32,8 @@ from kuberca.rules.r10_readiness_probe import ReadinessProbeRule
 
 from .conftest import make_oom_event
 
+pytestmark = [pytest.mark.integration, pytest.mark.performance]
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -206,7 +208,7 @@ class TestLedgerPerformance:
     def test_record_and_diff_cycle_under_10ms(self) -> None:
         """Recording a snapshot and diffing should take under 10ms."""
         ledger = ChangeLedger(max_versions=10, retention_hours=6)
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         # Record two snapshots
         snap1 = ResourceSnapshot(

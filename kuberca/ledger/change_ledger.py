@@ -21,7 +21,7 @@ from __future__ import annotations
 import sys
 from collections import deque
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Final
 
 from kuberca.ledger.diff import compute_diff
@@ -201,7 +201,7 @@ class ChangeLedger:
         if buf is None or len(buf) < 2:
             return []
 
-        cutoff = datetime.utcnow() - since
+        cutoff = datetime.now(UTC) - since
         # Collect snapshots within the window, preserving chronological order
         window = [snap for snap in buf if snap.captured_at >= cutoff]
 
@@ -288,7 +288,7 @@ class ChangeLedger:
         Modifies *buf* in-place.  Uses the instance retention configured at
         construction time (defaults to 6 hours).
         """
-        cutoff = datetime.utcnow() - self._retention
+        cutoff = datetime.now(UTC) - self._retention
         while buf and buf[0].captured_at < cutoff:
             buf.popleft()
 
@@ -321,7 +321,7 @@ class ChangeLedger:
         """
         ledger_trim_events_total.inc()
         ledger_memory_pressure_total.inc()
-        cutoff = datetime.utcnow() - _FAILSAFE_AGE_CUTOFF
+        cutoff = datetime.now(UTC) - _FAILSAFE_AGE_CUTOFF
         _log.error(
             "ledger_failsafe_eviction",
             memory_bytes=self._estimate_memory_bytes(),

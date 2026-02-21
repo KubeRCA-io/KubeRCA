@@ -8,8 +8,12 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
+import pytest
+
 from kuberca.cache.resource_cache import ResourceCache
 from kuberca.models.resources import CacheReadiness
+
+pytestmark = pytest.mark.integration
 
 # ---------------------------------------------------------------------------
 # Initial state

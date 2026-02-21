@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from kuberca.ledger.diff import compute_diff
 from kuberca.models.resources import FieldChange
@@ -222,9 +222,9 @@ class TestTimestamp:
         assert len(timestamps) == 1
 
     def test_changed_at_is_recent(self) -> None:
-        before = datetime.utcnow()
+        before = datetime.now(UTC)
         changes = compute_diff({"x": 1}, {"x": 2})
-        after = datetime.utcnow()
+        after = datetime.now(UTC)
         assert len(changes) == 1
         assert before <= changes[0].changed_at <= after
 

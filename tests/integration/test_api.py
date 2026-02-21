@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock
 
+import pytest
 from fastapi.testclient import TestClient
 
 from kuberca.api.app import create_app
@@ -21,6 +22,8 @@ from kuberca.models.analysis import (
 from kuberca.models.config import KubeRCAConfig
 from kuberca.models.events import DiagnosisSource, EvidenceType
 from kuberca.models.resources import CacheReadiness
+
+pytestmark = pytest.mark.integration
 
 # ---------------------------------------------------------------------------
 # Helpers

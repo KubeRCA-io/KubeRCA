@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import time
 
+import pytest
+
 from kuberca.cache.resource_cache import ResourceCache
 from kuberca.ledger.change_ledger import ChangeLedger
 from kuberca.models.analysis import CorrelationResult, RuleResult
@@ -21,6 +23,8 @@ from .conftest import (
     make_failed_scheduling_event,
     make_oom_event,
 )
+
+pytestmark = pytest.mark.integration
 
 # ---------------------------------------------------------------------------
 # OOMKilled pipeline
