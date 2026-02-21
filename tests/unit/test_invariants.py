@@ -831,3 +831,16 @@ class TestRuntimeInvariantViolationPaths:
             # READY → WARMING is invalid and should trigger violation
             error_calls = [c for c in mock_log.error.call_args_list if "invariant_violated" in str(c)]
             assert len(error_calls) > 0, "Expected INV-CS01 violation for READY → WARMING"
+
+    def test_empty_all_kinds_transition_increments_counter(self) -> None:
+        """Transition counter fires when _all_kinds becomes empty and state changes."""
+        cache = ResourceCache()
+        # Start at PARTIALLY_READY
+        cache._all_kinds = {"Pod"}
+        cache._ready_kinds = {"Pod"}
+        cache._readiness = CacheReadiness.PARTIALLY_READY
+
+        # Clear _all_kinds → triggers WARMING via the early-return branch
+        cache._all_kinds = set()
+        cache._recompute_readiness()
+        assert cache._readiness == CacheReadiness.WARMING
