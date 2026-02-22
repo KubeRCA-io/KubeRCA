@@ -14,7 +14,7 @@ evidence summaries without further type-checking.
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import cast
 
 from kuberca.models.resources import FieldChange
@@ -39,7 +39,7 @@ def compute_diff(old_spec: dict[str, object], new_spec: dict[str, object]) -> li
         A list of :class:`FieldChange` objects sorted by ``field_path``.
         An empty list means the two specs are identical.
     """
-    changed_at = datetime.utcnow()
+    changed_at = datetime.now(UTC)
     changes: list[FieldChange] = []
     _diff_values(old_spec, new_spec, path="", changes=changes, changed_at=changed_at)
     changes.sort(key=lambda fc: fc.field_path)

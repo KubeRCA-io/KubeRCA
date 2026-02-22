@@ -1,6 +1,6 @@
 [project]
 name = "kuberca"
-version = "0.1.1"
+version = "0.1.2"
 description = "Kubernetes Root Cause Analysis System"
 readme = {text = "KubeRCA - Kubernetes Root Cause Analysis System", content-type = "text/plain"}
 requires-python = ">=3.12"
@@ -28,6 +28,7 @@ dev = [
     "ruff>=0.8.0",
     "mypy>=1.13.0",
     "pre-commit>=4.0.0",
+    "hypothesis>=6.100.0",
 ]
 
 [project.scripts]
@@ -71,4 +72,5 @@ asyncio_mode = "auto"
 markers = [
     "integration: marks tests as integration tests",
     "performance: marks tests as performance benchmarks",
+    "stress: marks tests as load/stress tests (burst evaluation, memory bounds)",
 ]

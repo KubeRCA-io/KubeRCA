@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock
 
+import pytest
 from fastapi.testclient import TestClient
 
 from kuberca.api.app import create_app
@@ -21,6 +22,8 @@ from kuberca.models.analysis import (
 from kuberca.models.config import KubeRCAConfig
 from kuberca.models.events import DiagnosisSource, EvidenceType
 from kuberca.models.resources import CacheReadiness
+
+pytestmark = pytest.mark.integration
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -46,7 +49,7 @@ def _make_rca_response(**overrides) -> RCAResponse:
         ],
         "suggested_remediation": "Increase memory limit for the container.",
         "_meta": ResponseMeta(
-            kuberca_version="0.1.1",
+            kuberca_version="0.1.2",
             schema_version="1",
             cluster_id="test-cluster",
             timestamp="2024-01-15T10:30:01Z",

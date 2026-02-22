@@ -13,7 +13,7 @@ Technical Design Spec Section 4.3:
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -37,7 +37,7 @@ def _make_event(
     last_seen: datetime | None = None,
 ) -> EventRecord:
     if last_seen is None:
-        last_seen = datetime.utcnow()
+        last_seen = datetime.now(UTC)
     return EventRecord(
         source=EventSource.CORE_EVENT,
         severity=Severity.ERROR,
@@ -54,7 +54,7 @@ def _make_event(
 
 def _make_field_change(changed_at: datetime | None = None) -> FieldChange:
     if changed_at is None:
-        changed_at = datetime.utcnow()
+        changed_at = datetime.now(UTC)
     return FieldChange(
         field_path="spec.replicas",
         old_value="1",
@@ -73,7 +73,7 @@ def _make_resource_view(name: str = "my-deploy") -> CachedResourceView:
         annotations={},
         spec={},
         status={},
-        last_updated=datetime.utcnow(),
+        last_updated=datetime.now(UTC),
     )
 
 
@@ -105,14 +105,14 @@ class _MockRule:
 
 class TestAnyWithin30Min:
     def test_change_exactly_30_min_before_event_is_within_window(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         event = _make_event(last_seen=now)
         change = _make_field_change(changed_at=now - timedelta(minutes=30))
         corr = _corr(changes=[change])
         assert any_within_30min(corr, event) is True
 
     def test_change_31_min_before_event_is_outside_window(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         event = _make_event(last_seen=now)
         change = _make_field_change(changed_at=now - timedelta(minutes=31))
         corr = _corr(changes=[change])
@@ -120,7 +120,7 @@ class TestAnyWithin30Min:
 
     def test_change_within_30_min_after_event_counts(self) -> None:
         # Clock skew: change logged slightly after event
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         event = _make_event(last_seen=now)
         change = _make_field_change(changed_at=now + timedelta(minutes=10))
         corr = _corr(changes=[change])
@@ -132,7 +132,7 @@ class TestAnyWithin30Min:
         assert any_within_30min(corr, event) is False
 
     def test_multiple_changes_returns_true_if_any_within_window(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         event = _make_event(last_seen=now)
         # One old change, one recent change
         changes = [
@@ -199,9 +199,9 @@ class TestComputeConfidenceBaseOnly:
 class TestComputeConfidenceDiffBonus:
     def test_diff_bonus_added_when_changes_present(self) -> None:
         rule = _MockRule(base_confidence=0.55)
-        event = _make_event(count=1, last_seen=datetime.utcnow() - timedelta(hours=1))
+        event = _make_event(count=1, last_seen=datetime.now(UTC) - timedelta(hours=1))
         # Change outside 30-min window
-        change = _make_field_change(changed_at=datetime.utcnow() - timedelta(hours=2))
+        change = _make_field_change(changed_at=datetime.now(UTC) - timedelta(hours=2))
         corr = _corr(
             changes=[change],
             related_resources=[_make_resource_view(), _make_resource_view("b")],
@@ -213,7 +213,7 @@ class TestComputeConfidenceDiffBonus:
 
 class TestComputeConfidenceTimingBonus:
     def test_timing_bonus_added_when_change_within_30_min(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         rule = _MockRule(base_confidence=0.55)
         event = _make_event(count=1, last_seen=now)
         change = _make_field_change(changed_at=now - timedelta(minutes=10))
@@ -228,7 +228,7 @@ class TestComputeConfidenceTimingBonus:
 
 class TestComputeConfidenceRecurrenceBonus:
     def test_recurrence_bonus_at_count_3(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         rule = _MockRule(base_confidence=0.55)
         event = _make_event(count=3, last_seen=now)
         # Change outside 30-min, no locality bonus
@@ -242,7 +242,7 @@ class TestComputeConfidenceRecurrenceBonus:
         assert score == pytest.approx(0.75, abs=1e-9)
 
     def test_no_recurrence_bonus_at_count_2(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         rule = _MockRule(base_confidence=0.55)
         event = _make_event(count=2, last_seen=now)
         change = _make_field_change(changed_at=now - timedelta(hours=2))
@@ -286,7 +286,7 @@ class TestComputeConfidenceLocalityBonus:
 
 class TestComputeConfidenceCap:
     def test_all_bonuses_capped_at_095(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         rule = _MockRule(base_confidence=0.60)
         event = _make_event(count=5, last_seen=now)
         change = _make_field_change(changed_at=now - timedelta(minutes=5))
@@ -296,7 +296,7 @@ class TestComputeConfidenceCap:
         assert score == pytest.approx(0.95, abs=1e-9)
 
     def test_score_never_exceeds_095(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         rule = _MockRule(base_confidence=0.90)
         event = _make_event(count=10, last_seen=now)
         change = _make_field_change(changed_at=now - timedelta(minutes=1))
@@ -322,7 +322,7 @@ class TestComputeConfidenceCap:
 
 class TestComputeConfidenceCombinations:
     def test_diff_and_timing_bonuses(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         rule = _MockRule(base_confidence=0.55)
         event = _make_event(count=1, last_seen=now)
         change = _make_field_change(changed_at=now - timedelta(minutes=15))
@@ -343,7 +343,7 @@ class TestComputeConfidenceCombinations:
         assert score == pytest.approx(0.60, abs=1e-9)
 
     def test_all_bonuses_except_locality(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         rule = _MockRule(base_confidence=0.55)
         event = _make_event(count=3, last_seen=now)
         change = _make_field_change(changed_at=now - timedelta(minutes=20))

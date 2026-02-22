@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import copy
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import StrEnum
 from typing import cast
 
@@ -63,7 +63,7 @@ class CachedResource:
     annotations: dict[str, str] = field(default_factory=dict)
     spec: dict[str, object] = field(default_factory=dict)
     status: dict[str, object] = field(default_factory=dict)
-    last_updated: datetime = field(default_factory=datetime.utcnow)
+    last_updated: datetime = field(default_factory=lambda: datetime.now(UTC))
     _redacted_view: CachedResourceView | None = field(default=None, repr=False, compare=False)
 
     def redacted_view(self) -> CachedResourceView:

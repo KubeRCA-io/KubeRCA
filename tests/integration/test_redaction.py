@@ -9,11 +9,15 @@ from __future__ import annotations
 import copy
 import hashlib
 
+import pytest
+
 from kuberca.cache.redaction import redact_dict, redact_value, redacted_json
 from kuberca.cache.resource_cache import ResourceCache
 from kuberca.llm.evidence import EvidencePackage
 
 from .conftest import make_oom_event
+
+pytestmark = pytest.mark.integration
 
 # ---------------------------------------------------------------------------
 # Helpers

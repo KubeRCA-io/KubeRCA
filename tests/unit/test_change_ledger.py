@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -30,7 +30,7 @@ def _snap(
     if spec is None:
         spec = {"replicas": 1}
     if captured_at is None:
-        captured_at = datetime.utcnow()
+        captured_at = datetime.now(UTC)
     spec_hash = hashlib.sha256(str(spec).encode()).hexdigest()
     return ResourceSnapshot(
         kind=kind,
@@ -115,8 +115,8 @@ class TestDiff:
 
     def test_diff_uses_since_window(self) -> None:
         ledger = ChangeLedger()
-        old_time = datetime.utcnow() - timedelta(hours=3)
-        recent_time = datetime.utcnow() - timedelta(minutes=10)
+        old_time = datetime.now(UTC) - timedelta(hours=3)
+        recent_time = datetime.now(UTC) - timedelta(minutes=10)
         # Old snapshot is outside the default 2h window
         ledger.record(_snap(spec={"replicas": 1}, resource_version="1", captured_at=old_time))
         ledger.record(_snap(spec={"replicas": 2}, resource_version="2", captured_at=recent_time))
@@ -133,7 +133,7 @@ class TestDiff:
 
     def test_diff_with_custom_since(self) -> None:
         ledger = ChangeLedger()
-        t0 = datetime.utcnow() - timedelta(minutes=5)
+        t0 = datetime.now(UTC) - timedelta(minutes=5)
         ledger.record(_snap(spec={"replicas": 1}, resource_version="1", captured_at=t0))
         ledger.record(_snap(spec={"replicas": 2}, resource_version="2"))
         # 1-minute window excludes snapshot at t0
@@ -142,7 +142,7 @@ class TestDiff:
 
     def test_diff_concatenates_multiple_pairs(self) -> None:
         ledger = ChangeLedger(max_versions=5)
-        t = datetime.utcnow()
+        t = datetime.now(UTC)
         ledger.record(_snap(spec={"replicas": 1, "paused": False}, resource_version="1", captured_at=t))
         ledger.record(
             _snap(spec={"replicas": 2, "paused": False}, resource_version="2", captured_at=t + timedelta(seconds=1))
@@ -193,7 +193,7 @@ class TestRetention:
     def test_old_snapshots_expired_on_record(self) -> None:
         # Use a 1-hour retention ledger
         ledger = ChangeLedger(max_versions=10, retention_hours=1)
-        ancient = datetime.utcnow() - timedelta(hours=8)
+        ancient = datetime.now(UTC) - timedelta(hours=8)
         ledger.record(_snap(spec={"replicas": 0}, resource_version="0", captured_at=ancient))
         # Adding a fresh snapshot should trigger expiry of the ancient one
         ledger.record(_snap(spec={"replicas": 1}, resource_version="1"))

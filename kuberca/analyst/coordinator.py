@@ -27,6 +27,7 @@ from kuberca.models.analysis import (
 from kuberca.models.events import DiagnosisSource, EventRecord, EventSource, EvidenceType, Severity
 from kuberca.models.resources import CachedResourceView, CacheReadiness, FieldChange
 from kuberca.observability.metrics import (
+    invariant_violations_total,
     llm_quality_check_failures_total,
     rca_duration_seconds,
     rca_requests_total,
@@ -134,7 +135,7 @@ KIND_ALIASES: dict[str, str] = {
 _TIME_WINDOW_RE = re.compile(r"^([0-9]+)(m|h|d)$")
 _DNS_SUBDOMAIN_RE = re.compile(r"^[a-z0-9]([a-z0-9\-\.]{0,251}[a-z0-9])?$")
 
-_KUBERCA_VERSION = "0.1.1"
+_KUBERCA_VERSION = "0.1.2"
 _SCHEMA_VERSION = "1"
 
 
@@ -229,6 +230,15 @@ def _rule_result_to_rca_response(
     elif cache_readiness == CacheReadiness.PARTIALLY_READY:
         confidence -= 0.15
 
+    if confidence < 0.0 or confidence > 0.95:
+        _logger.error(
+            "invariant_violated",
+            invariant="INV-C02_final_confidence_range",
+            value=confidence,
+            raw_confidence=rule_result.confidence,
+            cache_state=cache_readiness.value,
+        )
+        invariant_violations_total.labels(invariant_name="INV-C02_final_confidence_range").inc()
     confidence = max(0.0, min(confidence, 0.95))
 
     # Sort evidence items by timestamp descending (most recent first)

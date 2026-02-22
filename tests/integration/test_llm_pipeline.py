@@ -21,6 +21,8 @@ from kuberca.models.resources import FieldChange
 
 from .conftest import make_event, make_oom_event
 
+pytestmark = pytest.mark.integration
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------

@@ -13,6 +13,8 @@ import pytest
 from kuberca.analyst.queue import Priority, QueueFullError, WorkQueue
 from kuberca.models.resources import CacheReadiness
 
+pytestmark = pytest.mark.integration
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

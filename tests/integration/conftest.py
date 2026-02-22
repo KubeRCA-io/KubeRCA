@@ -7,7 +7,7 @@ full pipelines without touching real Kubernetes clusters.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from unittest.mock import MagicMock
 
 import pytest
@@ -26,10 +26,8 @@ from kuberca.rules.r03_failed_scheduling import FailedSchedulingRule
 # Timestamp helpers
 # ---------------------------------------------------------------------------
 
-# Use naive UTC datetimes to match the ledger's datetime.utcnow() convention.
-# The change ledger and compute_diff both use datetime.utcnow() (naive),
-# so events must also be naive to allow arithmetic in compute_confidence.
-_NOW = datetime.utcnow()  # noqa: DTZ003
+# Use timezone-aware UTC datetimes matching the ledger/diff convention.
+_NOW = datetime.now(UTC)
 _30_MIN_AGO = _NOW - timedelta(minutes=30)
 _1H_AGO = _NOW - timedelta(hours=1)
 _2H_AGO = _NOW - timedelta(hours=2)
@@ -324,7 +322,7 @@ def resource_cache() -> ResourceCache:
 
 def _populate_ledger_with_test_data(ledger: ChangeLedger) -> None:
     """Record test snapshots into the ChangeLedger for realistic diffs."""
-    now = datetime.utcnow()
+    now = datetime.now(UTC)
     one_hour_ago = now - timedelta(hours=1)
 
     # Two snapshots for my-app Deployment: memory limit and image changed.
