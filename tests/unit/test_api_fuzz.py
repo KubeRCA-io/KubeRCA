@@ -226,11 +226,12 @@ class TestAnalyzeResourceFuzz:
 
     @given(
         resource=st.builds(
-            lambda k, n, na: f"{k}/{n}/{na}",
+            lambda k, n, na, ctrl: f"{k}{ctrl}/{n}/{na}",
             st.text(min_size=1, max_size=10),
             st.text(min_size=1, max_size=10),
             st.text(min_size=1, max_size=10),
-        ).filter(lambda s: "\x00" in s or any(ord(c) < 32 for c in s))
+            st.sampled_from(["\x00", "\x01", "\x07", "\x08", "\x0b", "\x0c", "\x1b", "\x1f"]),
+        )
     )
     @settings(max_examples=30)
     def test_control_characters_never_crash(self, resource: str) -> None:
